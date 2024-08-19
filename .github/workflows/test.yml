@@ -29,3 +29,6 @@ jobs:
       - name: Upload migration files to S3
         run: |
           aws s3 cp migrations/ s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
+      - name: Remove migration files from S3
+        run: |
+          aws s3 rm s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
