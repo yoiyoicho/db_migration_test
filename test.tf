@@ -35,6 +35,7 @@ resource "aws_iam_policy" "github_actions_migration_policy" {
           "s3:ListBucket"
         ],
         "Resource" : [
+          "arn:aws:s3:::yoshino-minako-migrations",
           "arn:aws:s3:::yoshino-minako-migrations/*"
         ]
       },

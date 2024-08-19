@@ -26,9 +26,9 @@ jobs:
           role-to-assume: ${{env.ROLE_TO_ASSUME}}
           role-session-name: github-actions
           aws-region: ${{env.AWS_REGION}}
-      - name: Upload migration files to S3
-        run: |
-          aws s3 cp migrations/ s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
+      # - name: Upload migration files to S3
+      #  run: |
+      #    aws s3 cp migrations/ s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
       - name: Remove migration files from S3
         run: |
           aws s3 rm s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
