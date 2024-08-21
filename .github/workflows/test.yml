@@ -35,10 +35,10 @@ jobs:
       # タスク定義のリビジョンを取得
       - name: Get task definition revision
         id: get-task-definition-revision
-        run: echo "::set-output name=revision::$(aws ecs list-task-definitions --family-prefix rump-db-migration --sort DESC --query "taskDefinitionArns[0]" --output text --no-paginate)"
+        run: aws ecs list-task-definitions
       # ECSタスク起動に必要なサブネットとセキュリティグループのIDを取得
       - name: Get subnets ids and security groups ids
         id: get-subnets-and-security-groups
         run: |
-          echo "::set-output name=subnets::$(aws ec2 describe-subnets --filter Name=tag:Name,Values=${{ env.SUBNET_NAME }} --query "Subnets[*].[SubnetId]" --output text)"
-          echo "::set-output name=security-groups::$(aws ec2 describe-security-groups --filter Name=tag:Name,Values=${{ env.SECURITY_GROUP_NAME }} --query "SecurityGroups[*].[GroupId]" --output text)"
+          aws ec2 describe-subnets
+          aws ec2 describe-security-groups
