@@ -26,9 +26,19 @@ jobs:
           role-to-assume: ${{env.ROLE_TO_ASSUME}}
           role-session-name: github-actions
           aws-region: ${{env.AWS_REGION}}
-      - name: Upload migration files to S3
+      # - name: Upload migration files to S3
+      #   run: |
+      #     aws s3 cp migrations/ s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
+      # - name: Remove migration files from S3
+      #   run: |
+      #     aws s3 rm s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
+      # タスク定義のリビジョンを取得
+      - name: Get task definition revision
+        id: get-task-definition-revision
+        run: echo "::set-output name=revision::$(aws ecs list-task-definitions --family-prefix rump-db-migration --sort DESC --query "taskDefinitionArns[0]" --output text --no-paginate)"
+      # ECSタスク起動に必要なサブネットとセキュリティグループのIDを取得
+      - name: Get subnets ids and security groups ids
+        id: get-subnets-and-security-groups
         run: |
-          aws s3 cp migrations/ s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
-      - name: Remove migration files from S3
-        run: |
-          aws s3 rm s3://${{env.AWS_BUCKET}}/test/ --exclude "*" --include "*.sql" --recursive
+          echo "::set-output name=subnets::$(aws ec2 describe-subnets --filter Name=tag:Name,Values=${{ env.SUBNET_NAME }} --query "Subnets[*].[SubnetId]" --output text)"
+          echo "::set-output name=security-groups::$(aws ec2 describe-security-groups --filter Name=tag:Name,Values=${{ env.SECURITY_GROUP_NAME }} --query "SecurityGroups[*].[GroupId]" --output text)"
